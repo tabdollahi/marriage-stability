@@ -1,17 +1,62 @@
 require 'namey'
 $generator = Namey::Generator.new
 
-class Person
-  attr_accessor :preferences, :name, :single
+module Person
+  attr_accessor :name, :preferences
+  attr_reader :fiance
 
   def initialize
     @preferences = nil
     @name = nil
-    @single = true
+    @fiance = nil
   end
 
   def single?
-    @single
+    @fiance == nil 
+  end
+
+  def engage(partner)
+    @fiance = partner
+  end
+
+  def unengage
+    @fiance = nil
+  end
+
+end
+
+class Initiator 
+  include Person
+
+  def propose_to_next_preferred
+    highest_ranked_unproposed = self.preferences[0]
+    highest_ranked_unproposed.proposal_review(self)
+    self.preferences.shift
+  end
+  
+end
+
+class Receiver
+  include Person
+
+  def proposal_review(initiator)
+    if self.single?
+      new_suitor_acceptance(initiator)
+    else
+      compare_suitors(initiator)
+    end
+  end
+
+  def new_suitor_acceptance(initiator)
+    self.engage(initiator)
+    initiator.engage(self)  
+  end
+
+  def compare_suitors(initiator)
+    if self.preferences.index(initiator) < self.preferences.index(self.fiance)
+      self.fiance.unengage
+      new_suitor_acceptance(initiator)
+    end
   end
 
 end
@@ -21,12 +66,11 @@ class StableMatching
   attr_reader :initiators, :receivers
 
   def initialize(participant_count, preferences=nil)
-    @initiators = Array.new(participant_count) {Person.new}
-    @receivers = Array.new(participant_count) {Person.new}
+    @initiators = Array.new(participant_count) {Initiator.new}
+    @receivers = Array.new(participant_count) {Receiver.new}
     set_names_male(@initiators)
     set_names_female(@receivers)
     set_preferences(preferences)
-    @engagements = {}
   end
 
   def dating_game
@@ -38,17 +82,7 @@ class StableMatching
   def play_round
     @initiators.each do |current_suitor|
       if current_suitor.single?
-        highest_ranked_unproposed = current_suitor.preferences[0]
-        if highest_ranked_unproposed.single?
-          propose_and_engage(current_suitor, highest_ranked_unproposed)
-        else
-          receiver_fiance = @engagements[highest_ranked_unproposed]
-          if highest_ranked_unproposed.preferences.index(current_suitor) < highest_ranked_unproposed.preferences.index(receiver_fiance)
-            dump_fiance(receiver_fiance, highest_ranked_unproposed)
-            propose_and_engage(current_suitor, highest_ranked_unproposed)
-          end
-        end 
-        current_suitor.preferences.shift
+        current_suitor.propose_to_next_preferred
       end
     end
   end
@@ -61,10 +95,9 @@ class StableMatching
   def display_final_engagements
     puts "*"*80
     puts "Final Engagements"
-    @engagements.each do |k,v|
-      puts "#{k.name}:#{v.name}"
+    @receivers.each do |receiver|
+      puts "#{receiver.name}: #{receiver.fiance.name}"
     end
-    puts "*"*80
   end
 
   private
@@ -109,16 +142,6 @@ class StableMatching
     end
   end
 
-   def propose_and_engage(initiator, receiver)
-    initiator.single = false
-    receiver.single = false 
-    @engagements[receiver] = initiator
-  end
-
-  def dump_fiance(fiance, receiver)
-    fiance.single = true
-    @engagements.delete(receiver)
-  end
 end
 
 test = StableMatching.new(4)
