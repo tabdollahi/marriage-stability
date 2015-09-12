@@ -17,10 +17,10 @@ describe "#play_round" do
   end
   context "when receiver of proposal is single" do
     it "receiver accepts proposal and becomes engaged" do
-      expect{@stable_matcher.play_round}.to change{@stable_matcher.receivers[0].single}.from(true).to(false)
+      expect{@stable_matcher.play_round}.to change{@stable_matcher.receivers[0].single?}.from(true).to(false)
     end
     it "initiator becomes engaged" do
-      expect{@stable_matcher.play_round}.to change{@stable_matcher.initiators[0].single}.from(true).to(false)
+      expect{@stable_matcher.play_round}.to change{@stable_matcher.initiators[0].single?}.from(true).to(false)
     end
   end
 end
