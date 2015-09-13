@@ -80,10 +80,8 @@ class StableMatching
   end
 
   def play_round
-    @initiators.each do |current_suitor|
-      if current_suitor.single?
-        current_suitor.propose_to_next_preferred
-      end
+    @initiators.select {|x| x.single?}.each do |current_suitor|
+      current_suitor.propose_to_next_preferred
     end
   end
 
@@ -92,11 +90,13 @@ class StableMatching
     display_helper(@receivers)
   end
 
-  def display_final_engagements
+  def display_engagements
     puts "*"*80
-    puts "Final Engagements"
+    puts "Engagements"
     @receivers.each do |receiver|
-      puts "#{receiver.name}: #{receiver.fiance.name}"
+      if receiver.fiance != nil
+        puts "#{receiver.name}: #{receiver.fiance.name}"
+      end
     end
   end
 
@@ -147,6 +147,6 @@ end
 test = StableMatching.new(4)
 
 
-test.display_preferences
-test.dating_game
-test.display_final_engagements
+# test.display_preferences
+# test.dating_game
+# test.display_final_engagements
