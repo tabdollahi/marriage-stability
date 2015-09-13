@@ -5,9 +5,9 @@ module Person
   attr_accessor :name, :preferences
   attr_reader :fiance
 
-  def initialize
-    @preferences = nil
-    @name = nil
+  def initialize(name = nil, preferences = nil)
+    @preferences = preferences
+    @name = name
     @fiance = nil
   end
 
@@ -65,12 +65,9 @@ class StableMatching
 
   attr_reader :initiators, :receivers
 
-  def initialize(participant_count, preferences=nil)
-    @initiators = Array.new(participant_count) {Initiator.new}
-    @receivers = Array.new(participant_count) {Receiver.new}
-    set_names_male(@initiators)
-    set_names_female(@receivers)
-    set_preferences(preferences)
+  def initialize(generator)
+    @initiators = generator.initiators
+    @receivers = generator.receivers
   end
 
   def dating_game
@@ -110,6 +107,33 @@ class StableMatching
     end
   end
 
+end
+
+class RandomPersonsGenerator
+
+  attr_reader :initiators, :receivers
+
+  def initialize(participant_count)
+    @initiators = Array.new(participant_count) {Initiator.new}
+    @receivers = Array.new(participant_count) {Receiver.new}
+    set_names_male(@initiators)
+    set_names_female(@receivers)
+    set_preferences
+  end
+
+  private
+
+  def set_preferences
+    set_preferences_helper(@initiators, @receivers)
+    set_preferences_helper(@receivers, @initiators)
+  end
+
+  def set_preferences_helper(group_one, group_two)
+    group_one.each do |person|
+      person.preferences = group_two.shuffle
+    end
+  end
+
   def set_names_male(group)
     group.each do |person|
       person.name = $generator.male
@@ -122,31 +146,24 @@ class StableMatching
     end
   end
 
-  def set_preferences_helper(group_one, group_two)
-    group_one.each do |person|
-      person.preferences = group_two.shuffle
-    end
-  end
+end
 
-  def set_preferences(preferences)
-    if preferences.nil?
-      set_preferences_helper(@initiators, @receivers)
-      set_preferences_helper(@receivers, @initiators)
-    else 
-      preferences[:initiators].each do |k,v|
-        @initiators[k].preferences = v.map!{|num| @receivers[num]}
-      end
-      preferences[:receivers].each do |k,v|
-        @receivers[k].preferences = v.map!{|num| @initiators[num]}
-      end
-    end
+class SpecificPersonsGenerator
+
+  attr_reader :initiators, :receivers
+
+  def initialize(initiators, receivers)
+    @initiators = initiators
+    @receivers = receivers
   end
 
 end
 
-test = StableMatching.new(4)
+
+
+# test = StableMatching.new(RandomPersonsGenerator.new(4))
 
 
 # test.display_preferences
 # test.dating_game
-# test.display_final_engagements
+# test.display_engagements

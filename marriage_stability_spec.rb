@@ -1,82 +1,87 @@
 require "./marriage_stability"
 
-describe "#dating_game" do
+describe "MarriableStability" do
   before :each do
-    preference_hash = {
-        initiators: {
-          0=> [0,1,2],
-          1=> [1,0,2],
-          2=> [2,1,0]
-          },
-        receivers: {
-          0=> [0,1,2],
-          1=> [0,1,2],
-          2=> [1,0,2]
-          }
-      }
-      @simulation = StableMatching.new(3, preference_hash)
+    @johnny   = Initiator.new("Johnny Depp")
+    @mads     = Initiator.new("Mads Mikkelsen")
+    @ryan     = Initiator.new("Ryan Gosling")
+
+    @rachel   = Receiver.new("Rachel McAdams",  [@mads, @johnny, @ryan])
+    @penelope = Receiver.new("Penelope Cruz",   [@johnny, @mads, @ryan])
+    @natalie  = Receiver.new("Natalie Portman", [@mads, @johnny, @ryan])
+ 
+    @johnny.preferences = [@rachel, @penelope, @natalie]
+    @mads.preferences   = [@rachel, @penelope, @natalie]
+    @ryan.preferences   = [@penelope, @natalie, @rachel]
+
+    initiators = [@johnny, @mads, @ryan]
+    receivers  = [@rachel, @penelope, @natalie]
+
+    @simulation = StableMatching.new(SpecificPersonsGenerator.new(initiators, receivers))
   end
 
-  it "continue simulation until all initiators are not single" do
-    expect{@simulation.dating_game}.to change{@simulation.initiators.any? { |initiator| initiator.single? }}.from(true).to(false)
-  end
 
-end
-
-describe "#proposal_review" do 
-  before :each do
-    preference_hash = {
-        initiators: {
-          0=> [0,1,2],
-          1=> [0,1,2],
-          2=> [1,2,0]
-          },
-        receivers: {
-          0=> [0,1,2],
-          1=> [0,1,2],
-          2=> [1,0,2]
-          }
-      }
-   @simulation = StableMatching.new(3, preference_hash)
-  end
-
-  context "when receiver has more than one offer" do
-    it "receiver accepts preferred offer even if it's not first" do
-        special_preference_hash = {
-        initiators: {
-          0=> [0,1,2],
-          1=> [0,1,2],
-          2=> [1,2,0]
-          },
-        receivers: {
-          0=> [1,0,2],
-          1=> [0,1,2],
-          2=> [1,0,2]
-          }
-      }
-      @simulation = StableMatching.new(3, special_preference_hash)
-      expect{@simulation.play_round}.to change{@simulation.receivers[0].fiance}.from(nil).to(@simulation.initiators[1])
+  describe "#dating_game" do
+    it "simulation continues until all initiators are not single" do
+      expect{@simulation.dating_game}.to change{@simulation.initiators.any? { |initiator| initiator.single? }}.from(true).to(false)
     end
   end
 
-  context "when receiver of proposal is single" do
-    it "receiver accepts proposal and becomes engaged to suitor" do
-      expect{@simulation.play_round}.to change{@simulation.receivers[0].single?}.from(true).to(false)
+  describe "#play_round" do 
+    context "when receiver has more than one offer" do
+      it "receiver accepts preferred offer even if it's not first" do
+        expect{@simulation.play_round}.to change{@rachel.fiance}.from(nil).to(@mads)
+      end
     end
-    it "initiator becomes engaged" do
-      expect{@simulation.play_round}.to change{@simulation.initiators[0].single?}.from(true).to(false)
+
+    context "when receiver accepts proposal" do
+      it "receiver is no longer single" do
+        expect{@simulation.play_round}.to change{@rachel.single?}.from(true).to(false)
+      end
+      it "initiator is no longer single" do
+        expect{@simulation.play_round}.to change{@mads.single?}.from(true).to(false)
+      end
     end
+
+    context "when receiver of proposal is already engaged and prefers new suitor" do
+      before :each do
+        @simulation.play_round
+      end
+      it "receiver becomes engaged to new suitor" do
+        expect{@simulation.play_round}.to change{@penelope.fiance}.from(@ryan).to(@johnny)
+      end
+
+      it "new suitor becomes engaged to receiver" do
+        expect{@simulation.play_round}.to change{@johnny.fiance}.from(nil).to(@penelope)
+      end
+
+      it "old fiance becomes unengaged" do
+        expect{@simulation.play_round}.to change{@ryan.fiance}.from(@penelope).to(nil)
+      end
+    end
+
+    context "when receiver of proposal is already engaged and does not prefer new suitor" do
+      before :each do
+        @penelope.preferences = [@ryan, @johnny, @mads]
+        @simulation.play_round
+      end
+      it "receiver remains engaged to existing fiance" do
+        expect{@simulation.play_round}.not_to change{@penelope.fiance}
+      end
+
+      it "new suitor remains single" do
+        expect{@simulation.play_round}.not_to change{@ryan.fiance}
+      end
+
+      it "existing fiance remains engaged to receiver" do
+        expect{@simulation.play_round}.not_to change{@johnny.fiance}
+      end
+    end 
   end
 
-  context "when receiver of proposal is not single and prefers new suitor" do
-    it "receiver becomes engaged to new suitor" do
-      @simulation.play_round
-      expect{@simulation.play_round}.to change{@simulation.receivers[1].fiance}.from(@simulation.initiators[2]).to(@simulation.initiators[1])
-    end
-
-    it "old fiance becomes unengaged" do
-      @simulation.play_round
-      expect{@simulation.play_round}.to change{@simulation.initiators[2].fiance}.from(@simulation.receivers[1]).to(nil)
+  describe "#propose_to_next_preferred" do
+    it "initiators propose to the most preferred receiver they have not yet proposed to" do
+      expect{@ryan.propose_to_next_preferred}.to change{@ryan.preferences[0]}.from(@penelope).to(@natalie)
     end
   end
 end
