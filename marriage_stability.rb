@@ -13,7 +13,7 @@ class StableMatching
   def dating_game
     while any_singles?
       play_round
-      display_marital_statuses
+      # display_marital_statuses
     end
   end
 
@@ -73,9 +73,10 @@ end
 
 
 
-test = StableMatching.new(RandomPersonsGenerator.new(4))
+test = StableMatching.new(RandomPersonsGenerator.new(participant_count: 4, initiator_gender: "female", receiver_gender: "male"))
 
 
 test.display_preferences
 test.dating_game
+test.display_marital_statuses
 

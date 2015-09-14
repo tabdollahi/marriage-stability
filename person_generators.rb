@@ -5,11 +5,11 @@ class RandomPersonsGenerator
 
   attr_reader :initiators, :receivers
 
-  def initialize(participant_count)
-    @initiators = Array.new(participant_count) {Initiator.new}
-    @receivers = Array.new(participant_count) {Receiver.new}
-    set_names_male(@initiators)
-    set_names_female(@receivers)
+  def initialize(options)
+    @initiators = Array.new(options[:participant_count]) {Initiator.new}
+    @receivers = Array.new(options[:participant_count]) {Receiver.new}
+    set_names(@initiators, options[:initiator_gender])
+    set_names(@receivers, options[:receiver_gender])
     set_preferences
   end
 
@@ -26,15 +26,9 @@ class RandomPersonsGenerator
     end
   end
 
-  def set_names_male(group)
+  def set_names(group, gender)
     group.each do |person|
-      person.name = $generator.male
-    end
-  end
-
-  def set_names_female(group)
-    group.each do |person|
-      person.name = $generator.female
+      person.name = $generator.send(gender.to_sym)
     end
   end
 
