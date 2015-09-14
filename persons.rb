@@ -1,11 +1,12 @@
 module Person
   attr_accessor :name, :preferences
-  attr_reader :fiance
+  attr_reader :fiance, :unproposed_list
 
   def initialize(name = nil, preferences = nil)
     @preferences = preferences
     @name = name
     @fiance = nil
+    @unproposed_list = nil
   end
 
   def single?
@@ -26,9 +27,10 @@ class Initiator
   include Person
 
   def propose_to_next_preferred
-    highest_ranked_unproposed = self.preferences[0]
+    @unproposed_list = @unproposed_list || @preferences.dup
+    highest_ranked_unproposed = @unproposed_list[0]
     highest_ranked_unproposed.proposal_review(self)
-    self.preferences.shift
+    @unproposed_list.shift
   end
   
 end
