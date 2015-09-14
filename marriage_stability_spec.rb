@@ -2,13 +2,13 @@ require "./marriage_stability"
 
 describe "StableMatching" do
   before :each do
-    @johnny   = Initiator.new("Johnny Depp")
-    @mads     = Initiator.new("Mads Mikkelsen")
-    @ryan     = Initiator.new("Ryan Gosling")
+    @johnny   = Person.new("Johnny Depp")
+    @mads     = Person.new("Mads Mikkelsen")
+    @ryan     = Person.new("Ryan Gosling")
 
-    @rachel   = Receiver.new("Rachel McAdams",  [@mads, @johnny, @ryan])
-    @penelope = Receiver.new("Penelope Cruz",   [@johnny, @mads, @ryan])
-    @natalie  = Receiver.new("Natalie Portman", [@mads, @johnny, @ryan])
+    @rachel   = Person.new("Rachel McAdams",  [@mads, @johnny, @ryan])
+    @penelope = Person.new("Penelope Cruz",   [@johnny, @mads, @ryan])
+    @natalie  = Person.new("Natalie Portman", [@mads, @johnny, @ryan])
  
     @johnny.preferences = [@rachel, @penelope, @natalie]
     @mads.preferences   = [@rachel, @penelope, @natalie]

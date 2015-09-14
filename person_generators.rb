@@ -6,8 +6,8 @@ class RandomPersonsGenerator
   attr_reader :initiators, :receivers
 
   def initialize(options)
-    @initiators = Array.new(options[:participant_count]) {Initiator.new}
-    @receivers = Array.new(options[:participant_count]) {Receiver.new}
+    @initiators = Array.new(options[:participant_count]) {Person.new}
+    @receivers = Array.new(options[:participant_count]) {Person.new}
     set_names(@initiators, options[:initiator_gender])
     set_names(@receivers, options[:receiver_gender])
     set_preferences

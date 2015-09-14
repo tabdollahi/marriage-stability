@@ -74,7 +74,6 @@ end
 class MarriageStabilityStats
 
   def initialize
-
   end
 
   def average_group_partner_rank(stable_matcher_instance, group)
@@ -99,6 +98,9 @@ end
 # test.display_marital_statuses
 
 # stats = MarriageStabilityStats.new
+
+# puts stats.average_group_partner_rank(test, :receivers)
+# test.reverse_roles
 
 # puts stats.average_group_partner_rank(test, :receivers)
 

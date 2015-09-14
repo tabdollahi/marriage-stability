@@ -1,4 +1,4 @@
-module Person
+class Person
   attr_accessor :name, :preferences
   attr_reader :fiance, :unproposed_list
 
@@ -21,22 +21,12 @@ module Person
     @fiance = nil
   end
 
-end
-
-class Initiator 
-  include Person
-
   def propose_to_next_preferred
     @unproposed_list = @unproposed_list || @preferences.dup
     highest_ranked_unproposed = @unproposed_list[0]
     highest_ranked_unproposed.proposal_review(self)
     @unproposed_list.shift
   end
-  
-end
-
-class Receiver
-  include Person
 
   def proposal_review(initiator)
     if self.single?
@@ -52,8 +42,8 @@ class Receiver
   end
 
   def compare_suitors(initiator)
-    if self.preferences.index(initiator) < self.preferences.index(self.fiance)
-      self.fiance.unengage
+    if @preferences.index(initiator) < @preferences.index(@fiance)
+      @fiance.unengage
       new_suitor_acceptance(initiator)
     end
   end
