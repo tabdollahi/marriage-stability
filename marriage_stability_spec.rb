@@ -1,6 +1,6 @@
 require "./marriage_stability"
 
-describe "MarriableStability" do
+describe "StableMatching" do
   before :each do
     @johnny   = Initiator.new("Johnny Depp")
     @mads     = Initiator.new("Mads Mikkelsen")
@@ -20,10 +20,26 @@ describe "MarriableStability" do
     @simulation = StableMatching.new(SpecificPersonsGenerator.new(initiators, receivers))
   end
 
-
   describe "#dating_game" do
     it "simulation continues until all initiators are not single" do
       expect{@simulation.dating_game}.to change{@simulation.initiators.any? { |initiator| initiator.single? }}.from(true).to(false)
+    end
+  end
+
+  describe "#propose_to_next_preferred" do
+    context "before rounds have started" do
+      it "unproposed list starts as empty"do
+        expect{@johnny.propose_to_next_preferred}.to change{@johnny.unproposed_list}.from(nil).to([@penelope, @natalie])
+      end
+    end
+
+    context "after rounds have started" do
+      before do
+        @johnny.propose_to_next_preferred
+      end
+      it "already proposed to receivers are removed from unproposed list" do
+        expect{@johnny.propose_to_next_preferred}.to change{@johnny.unproposed_list}.from([@penelope, @natalie]).to([@natalie])
+      end
     end
   end
 
@@ -77,11 +93,5 @@ describe "MarriableStability" do
         expect{@simulation.play_round}.not_to change{@johnny.fiance}
       end
     end 
-  end
-
-  describe "#propose_to_next_preferred" do
-    it "initiators propose to the most preferred receiver they have not yet proposed to" do
-      expect{@ryan.propose_to_next_preferred}.to change{@ryan.preferences[0]}.from(@penelope).to(@natalie)
-    end
   end
 end
