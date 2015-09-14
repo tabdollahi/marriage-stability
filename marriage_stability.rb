@@ -71,12 +71,34 @@ class StableMatching
   end
 end
 
+class MarriageStabilityStats
+
+  def initialize
+
+  end
+
+  def average_group_partner_rank(stable_matcher_instance, group)
+    stable_matcher_instance.dating_game
+    sum = 0
+    persons = stable_matcher_instance.send(group)
+    persons.each do |person|
+      sum += (person.preferences.find_index(person.fiance)+1)
+    end
+    return sum.to_f/persons.length
+  end
+
+end
 
 
-test = StableMatching.new(RandomPersonsGenerator.new(participant_count: 4, initiator_gender: "female", receiver_gender: "male"))
+
+# test = StableMatching.new(RandomPersonsGenerator.new(participant_count: 4, initiator_gender: "female", receiver_gender: "male"))
 
 
-test.display_preferences
-test.dating_game
-test.display_marital_statuses
+# test.display_preferences
+# test.dating_game
+# test.display_marital_statuses
+
+# stats = MarriageStabilityStats.new
+
+# puts stats.average_group_partner_rank(test, :receivers)
 
