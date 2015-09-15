@@ -1,6 +1,6 @@
 class Person
-  attr_accessor :name, :preferences
-  attr_reader :fiance, :unproposed_list
+  attr_accessor :name, :preferences, :fiance
+  attr_reader :unproposed_list
 
   def initialize(name = nil, preferences = nil)
     @preferences = preferences
@@ -15,10 +15,12 @@ class Person
 
   def engage(partner)
     @fiance = partner
+    partner.fiance = self
   end
 
-  def unengage
+  def unengage(current_fiance)
     @fiance = nil
+    current_fiance.fiance = nil
   end
 
   def propose_to_next_preferred
@@ -30,21 +32,16 @@ class Person
 
   def proposal_review(initiator)
     if self.single?
-      new_suitor_acceptance(initiator)
+      engage(initiator)
     else
       compare_suitors(initiator)
     end
   end
 
-  def new_suitor_acceptance(initiator)
-    self.engage(initiator)
-    initiator.engage(self)  
-  end
-
   def compare_suitors(initiator)
     if @preferences.index(initiator) < @preferences.index(@fiance)
-      @fiance.unengage
-      new_suitor_acceptance(initiator)
+      unengage(@fiance)
+      engage(initiator)
     end
   end
 
