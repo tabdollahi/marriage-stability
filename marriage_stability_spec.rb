@@ -66,6 +66,20 @@ describe "StableMatching" do
     end
   end
 
+  describe "#clear_marital_statuses" do
+    before do
+      @simulation.dating_game
+    end
+
+    it "changes all receivers' fiances to nil" do
+      expect {@simulation.clear_marital_statuses}.to change{@simulation.receivers.all? {|receiver| receiver.fiance != nil }}.from(true).to(false)
+    end
+
+    it "changes all initiators' fiances to nil" do
+      expect {@simulation.clear_marital_statuses}.to change{@simulation.initiators.all? {|initiator| initiator.fiance != nil }}.from(true).to(false)
+    end
+  end
+
   describe "#play_round" do 
     context "when receiver has more than one offer" do
       it "receiver accepts preferred offer even if it's not first" do
