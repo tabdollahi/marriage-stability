@@ -43,6 +43,29 @@ describe "StableMatching" do
     end
   end
 
+  describe "#engage" do
+    it "receiver's fiance becomes initiator" do
+      expect {@johnny.engage(@natalie)}.to change{@johnny.fiance}.from(nil).to(@natalie)
+    end
+
+    it "initiator's fiance becomes receiver" do
+      expect {@johnny.engage(@natalie)}.to change{@natalie.fiance}.from(nil).to(@johnny)
+    end
+  end
+
+  describe "#unengage" do
+    before :each do
+      @johnny.engage(@natalie)
+    end
+    it "person's fiance becomes nil" do
+      expect {@johnny.unengage(@natalie)}.to change{@johnny.fiance}.from(@natalie).to(nil)
+    end
+
+    it "the fiance of the person's old fiance becomes nil" do
+      expect {@johnny.unengage(@natalie)}.to change{@natalie.fiance}.from(@johnny).to(nil)
+    end
+  end
+
   describe "#play_round" do 
     context "when receiver has more than one offer" do
       it "receiver accepts preferred offer even if it's not first" do
