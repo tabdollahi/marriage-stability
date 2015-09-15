@@ -81,7 +81,8 @@ end
 
 class MarriageStabilityStats
 
-  def initialize
+  def initialize #(runs_count, participant_count)
+    # @participant_count = participant_count
   end
 
   def average_group_partner_rank(stable_matcher_instance, group)
@@ -94,31 +95,41 @@ class MarriageStabilityStats
     return sum.to_f/persons.length
   end
 
+
+  def percentage_difference_group_scores(stable_matcher_instance)
+    (average_group_partner_rank(stable_matcher_instance, :receivers) - average_group_partner_rank(stable_matcher_instance, :initiators))/average_group_partner_rank(stable_matcher_instance, :initiators)*100
+  end
+
+
+  def generate_stats
+
+  end
+
 end
 
 
 
-test = StableMatching.new(RandomPersonsGenerator.new(participant_count: 100, initiator_gender: "male", receiver_gender: "female"))
+test = StableMatching.new(RandomPersonsGenerator.new(participant_count: 5, initiator_gender: "male", receiver_gender: "female"))
 
 
-# test.display_preferences
+test.display_preferences
 # puts test.dating_game
 # test.display_marital_statuses
 
 stats = MarriageStabilityStats.new
 
-puts "***Original Test***"
-puts "original test receivers' score as receivers"
-puts stats.average_group_partner_rank(test, :receivers)
-puts "original test initiators' score as initiators"
-puts stats.average_group_partner_rank(test, :initiators)
+# puts "***Original Test***"
+# puts "original test receivers' score as receivers"
+# puts stats.average_group_partner_rank(test, :receivers)
+# puts "original test initiators' score as initiators"
+# puts stats.average_group_partner_rank(test, :initiators)
 
 # puts "&"*80
 # puts "Reverse Test"
 
-test.clear_marital_statuses
+# test.clear_marital_statuses
 
-reverse_test = StableMatching.new(SpecificPersonsGenerator.new(test.receivers, test.initiators))
+# reverse_test = StableMatching.new(SpecificPersonsGenerator.new(test.receivers, test.initiators))
 
 # reverse_test.display_preferences
 # puts reverse_test.dating_game
@@ -126,16 +137,18 @@ reverse_test = StableMatching.new(SpecificPersonsGenerator.new(test.receivers, t
 
 # random_test = StableMatching.new(RandomPersonsGenerator.new(participant_count: 5, initiator_gender: "female", receiver_gender: "male"))
 
-puts "***Reversed Test***"
-puts "original test receivers' score as initiators"
-puts stats.average_group_partner_rank(reverse_test, :initiators)
-puts "original test initiator's score as receivers"
-puts stats.average_group_partner_rank(reverse_test, :receivers)
+# puts "***Reversed Test***"
+# puts "original test receivers' score as initiators"
+# puts stats.average_group_partner_rank(reverse_test, :initiators)
+# puts "original test initiator's score as receivers"
+# puts stats.average_group_partner_rank(reverse_test, :receivers)
 
 
 # puts "Random Test"
 # puts stats.average_group_partner_rank(random_test, :receivers)
 # puts stats.average_group_partner_rank(random_test, :initiators)
+
+p stats.percentage_difference_group_scores(test)
 
 
 
