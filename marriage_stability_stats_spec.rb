@@ -31,10 +31,6 @@ describe "MarriageStabilityStats" do
   end
 
   describe "#average_group_partner_rank" do
-    # before :each do
-    #   @simulation.dating_game
-    #   @simulation.display_marital_statuses
-    # end
     it "finds the average rank of the receivers' respective final partners" do
       expect(@stats_finder.average_group_partner_rank(@simulation, :receivers)).to be ==(2.4)
     end
