@@ -131,4 +131,14 @@ describe "StableMatching" do
       end
     end 
   end
+
+  describe "#reverse_roles" do
+    it "switches the initiator group to become the original receivers" do
+      expect{@simulation.reverse_roles}.to change{@simulation.initiators}.from([@johnny, @mads, @ryan]).to([@rachel, @penelope, @natalie])
+    end
+
+    it "switches the receiver group to become the original initiators" do
+      expect{@simulation.reverse_roles}.to change{@simulation.receivers}.from([@rachel, @penelope, @natalie]).to([@johnny, @mads, @ryan])
+    end
+  end
 end
