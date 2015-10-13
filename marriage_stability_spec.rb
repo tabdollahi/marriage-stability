@@ -58,11 +58,11 @@ describe "StableMatching" do
       @johnny.engage(@natalie)
     end
     it "person's fiance becomes nil" do
-      expect {@johnny.unengage(@natalie)}.to change{@johnny.fiance}.from(@natalie).to(nil)
+      expect {@johnny.unengage}.to change{@johnny.fiance}.from(@natalie).to(nil)
     end
 
     it "the fiance of the person's old fiance becomes nil" do
-      expect {@johnny.unengage(@natalie)}.to change{@natalie.fiance}.from(@johnny).to(nil)
+      expect {@johnny.unengage}.to change{@natalie.fiance}.from(@johnny).to(nil)
     end
   end
 

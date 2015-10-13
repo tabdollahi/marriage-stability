@@ -27,7 +27,7 @@ class StableMatching
 
   def clear_marital_statuses
     @receivers.select {|receiver| !receiver.single?}.each do |engaged_receiver| 
-      engaged_receiver.unengage(engaged_receiver.fiance)
+      engaged_receiver.unengage
     end
   end
 

@@ -18,9 +18,9 @@ class Person
     partner.fiance = self
   end
 
-  def unengage(current_fiance)
+  def unengage
+    @fiance.fiance = nil
     @fiance = nil
-    current_fiance.fiance = nil
   end
 
   def propose_to_next_preferred
@@ -40,7 +40,7 @@ class Person
 
   def compare_suitors(initiator)
     if @preferences.index(initiator) < @preferences.index(@fiance)
-      unengage(@fiance)
+      unengage
       engage(initiator)
     end
   end
