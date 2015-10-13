@@ -7,8 +7,9 @@ class StableMatching
   attr_reader :initiators, :receivers
 
   def initialize(generator)
-    @initiators = generator.initiators
-    @receivers = generator.receivers
+    @generator = generator
+    @initiators = @generator.initiators
+    @receivers = @generator.receivers
   end
 
   def dating_game
@@ -25,7 +26,15 @@ class StableMatching
   end
 
   def clear_marital_statuses
-    @receivers.each {|receiver| receiver.unengage(receiver.fiance)}
+    @receivers.select {|receiver| !receiver.single?}.each do |engaged_receiver| 
+      engaged_receiver.unengage(engaged_receiver.fiance)
+    end
+  end
+
+  def reverse_roles
+    clear_marital_statuses
+    @initiators = @generator.receivers
+    @receivers = @generator.initiators
   end
 
   def display_preferences
@@ -101,54 +110,12 @@ class MarriageStabilityStats
   end
 
 
+
   def generate_stats
 
   end
 
 end
-
-
-
-test = StableMatching.new(RandomPersonsGenerator.new(participant_count: 5, initiator_gender: "male", receiver_gender: "female"))
-
-
-test.display_preferences
-# puts test.dating_game
-# test.display_marital_statuses
-
-stats = MarriageStabilityStats.new
-
-# puts "***Original Test***"
-# puts "original test receivers' score as receivers"
-# puts stats.average_group_partner_rank(test, :receivers)
-# puts "original test initiators' score as initiators"
-# puts stats.average_group_partner_rank(test, :initiators)
-
-# puts "&"*80
-# puts "Reverse Test"
-
-# test.clear_marital_statuses
-
-# reverse_test = StableMatching.new(SpecificPersonsGenerator.new(test.receivers, test.initiators))
-
-# reverse_test.display_preferences
-# puts reverse_test.dating_game
-# reverse_test.display_marital_statuses
-
-# random_test = StableMatching.new(RandomPersonsGenerator.new(participant_count: 5, initiator_gender: "female", receiver_gender: "male"))
-
-# puts "***Reversed Test***"
-# puts "original test receivers' score as initiators"
-# puts stats.average_group_partner_rank(reverse_test, :initiators)
-# puts "original test initiator's score as receivers"
-# puts stats.average_group_partner_rank(reverse_test, :receivers)
-
-
-# puts "Random Test"
-# puts stats.average_group_partner_rank(random_test, :receivers)
-# puts stats.average_group_partner_rank(random_test, :initiators)
-
-p stats.percentage_difference_group_scores(test)
 
 
 
