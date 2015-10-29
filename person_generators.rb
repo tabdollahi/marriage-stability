@@ -8,12 +8,16 @@ class RandomPersonsGenerator
   def initialize(options)
     @initiators = Array.new(options[:participant_count]) {Person.new}
     @receivers = Array.new(options[:participant_count]) {Person.new}
-    set_names(@initiators, options[:initiator_gender])
-    set_names(@receivers, options[:receiver_gender])
     set_preferences
+    set_all_names(options) if options.has_key?(:initiator_gender)
   end
 
   private
+
+  def set_all_names(options)
+    set_names(@initiators, options[:initiator_gender])
+    set_names(@receivers, options[:receiver_gender])
+  end
 
   def set_preferences
     set_preferences_helper(@initiators, @receivers)
