@@ -1,7 +1,7 @@
-require "./marriage_stability"
-require "pry"
+require "./stable_matcher"
+require "./match_statistics"
 
-describe "MarriageStabilityStats" do
+describe "MatchStatistics" do
 
   before :each do
     @william = Person.new("William")
@@ -26,8 +26,8 @@ describe "MarriageStabilityStats" do
     initiators = [@william, @robert, @richard, @anthony, @john]
     receivers = [@elizabeth, @jennifer, @deborah, @dorothy, @nancy]
 
-    @simulation = StableMatching.new(SpecificPersonsGenerator.new(initiators, receivers))
-    @stats_finder = MarriageStabilityStats.new(@simulation)
+    @simulation = StableMatcher.new(SpecificPersonsGenerator.new(initiators, receivers))
+    @stats_finder = MatchStatistics.new(@simulation)
 
   end
 
@@ -37,12 +37,12 @@ describe "MarriageStabilityStats" do
     end
   end
 
-  describe "#average" do
+  describe "#average_group_score" do
     it "finds the average rank of the receivers' respective final partners" do
-      expect(@stats_finder.average(@stats_finder.final_partner_ranks(:receivers))).to be == (2.4)
+      expect(@stats_finder.average_group_score(:receivers)).to be == (2.4)
     end
     it "finds the average rank of the initiators' respective final partners" do
-      expect(@stats_finder.average(@stats_finder.final_partner_ranks(:initiators))).to be == (1.8)
+      expect(@stats_finder.average_group_score(:initiators)).to be == (1.8)
     end
   end
 
@@ -61,10 +61,13 @@ describe "MarriageStabilityStats" do
 
   describe "#improved_receiver_score" do
     it "returns an array of differences between original receiver satisifaction score and reversed score" do
-      @simulation.reverse_roles
-      @simulation.display_marital_statuses
-      binding.pry
-      expect(@stats_finder.improved_receiver_score).to be == ([])
+      expect(@stats_finder.improved_receiver_score).to be == ([0,2,0,0,2])
+    end
+  end
+
+  describe "#average_improvement_satisfaction_score" do
+    it "returns the average improvement in satisifcation score on a hundred point scale" do
+      expect(@stats_finder.average_improvement_satisfaction_score).to be == (16.0)
     end
   end
 end

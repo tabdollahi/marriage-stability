@@ -1,6 +1,6 @@
-require "./marriage_stability"
+require "./stable_matcher"
 
-describe "StableMatching" do
+describe "StableMatcher" do
   before :each do
     @johnny   = Person.new("Johnny Depp")
     @mads     = Person.new("Mads Mikkelsen")
@@ -17,7 +17,7 @@ describe "StableMatching" do
     initiators = [@johnny, @mads, @ryan]
     receivers  = [@rachel, @penelope, @natalie]
 
-    @simulation = StableMatching.new(SpecificPersonsGenerator.new(initiators, receivers))
+    @simulation = StableMatcher.new(SpecificPersonsGenerator.new(initiators, receivers))
   end
 
   describe "#dating_game" do
