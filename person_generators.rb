@@ -1,5 +1,5 @@
-require 'namey'
-$generator = Namey::Generator.new
+# require 'namey'
+# $generator = Namey::Generator.new
 
 class RandomPersonsGenerator
 
