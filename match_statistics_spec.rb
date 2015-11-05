@@ -53,9 +53,9 @@ describe "MatchStatistics" do
     end
   end
 
-  describe "#percent_diff" do
+  describe "#percent_change" do
     it "finds the percentage difference between two numbers" do
-      expect(@stats_finder.percentage_diff(2.4, 1.8)).to be == (33.33333333333333)
+      expect(@stats_finder.percentage_change(2.4, 1.8)).to be == (33.33333333333333)
     end
   end
 
